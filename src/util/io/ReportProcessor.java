@@ -42,13 +42,19 @@ public class ReportProcessor {
 
 	}
 
-	public void filterTargetMetrics(String inputFilePath, String fileName, String demand) {
+	private void createFolderHierarchyByDemand(String demand) {
 		File dir = new File("src/results/" + demand);
 		dir.mkdirs();
+
+	}
+
+	public void filterTargetMetrics(String inputFilePath, String demand) {
+		createFolderHierarchyByDemand(demand);
+
 		BufferedWriter logger = null;
 		try {
 			this.createReader(inputFilePath);
-			logger = createLogger("src/results/" + demand +"/"+ fileName);
+			logger = createLogger("src/results/" + demand + "/INTERMEDIARY_RESULTS.csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {
@@ -73,7 +79,8 @@ public class ReportProcessor {
 
 	}
 
-	public void segregateDevices(String inputFilePath, String demand) {
+	private void createFolderHierarchyByDevice(String demand) {
+
 		File dir = new File("src/results/" + demand + "/APP");
 		dir.mkdirs();
 		dir = new File("src/results/" + demand + "/LOGIN");
@@ -85,6 +92,11 @@ public class ReportProcessor {
 		dir = new File("src/results/" + demand + "/BD");
 		dir.mkdirs();
 
+	}
+
+	public void segregateDevices(String demand) {
+		createFolderHierarchyByDevice(demand);
+
 		BufferedWriter loggerApp = null;
 		BufferedWriter loggerLogin = null;
 		BufferedWriter loggerConsultar = null;
@@ -92,7 +104,7 @@ public class ReportProcessor {
 		BufferedWriter loggerBD = null;
 
 		try {
-			this.createReader(inputFilePath);
+			this.createReader("src/results/"+demand+"/INTERMEDIARY_RESULTS.csv");
 			loggerApp = createLogger("src/results/" + demand + "/APP/INTERMEDIARY_APP.csv");
 			loggerLogin = createLogger("src/results/" + demand + "/LOGIN/INTERMEDIARY_LOGIN.csv");
 			loggerConsultar = createLogger("src/results/" + demand + "/CONSULTAR/INTERMEDIARY_CONSULTAR.csv");
@@ -159,8 +171,8 @@ public class ReportProcessor {
 
 	public static void main(String[] args) throws IOException {
 		ReportProcessor rp = new ReportProcessor();
-		rp.filterTargetMetrics("COMPLETE_RESULTS_LOW.csv", "INTERMEDIARY_RESULTS.csv", "LOW_DEMAND");
-		rp.segregateDevices("src/results/INTERMEDIARY_RESULTS_LOW.csv", "LOW_DEMAND");
+		rp.filterTargetMetrics("COMPLETE_RESULTS_LOW.csv","LOW_DEMAND");
+		rp.segregateDevices("LOW_DEMAND");
 
 	}
 

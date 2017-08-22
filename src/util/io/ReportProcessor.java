@@ -42,13 +42,13 @@ public class ReportProcessor {
 
 	}
 
-	public void filterTargetMetrics(String inputFilePath, String fileName) {
-		File dir = new File("src/results/");
+	public void filterTargetMetrics(String inputFilePath, String fileName, String demand) {
+		File dir = new File("src/results/" + demand);
 		dir.mkdirs();
 		BufferedWriter logger = null;
 		try {
 			this.createReader(inputFilePath);
-			logger = createLogger("src/results/" + fileName);
+			logger = createLogger("src/results/" + demand +"/"+ fileName);
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {
@@ -73,16 +73,16 @@ public class ReportProcessor {
 
 	}
 
-	public void segregateDevices(String inputFilePath) {
-		File dir = new File("src/results/APP");
+	public void segregateDevices(String inputFilePath, String demand) {
+		File dir = new File("src/results/" + demand + "/APP");
 		dir.mkdirs();
-		dir = new File("src/results/LOGIN");
+		dir = new File("src/results/" + demand + "/LOGIN");
 		dir.mkdirs();
-		dir = new File("src/results/CONSULTAR");
+		dir = new File("src/results/" + demand + "/CONSULTAR");
 		dir.mkdirs();
-		dir = new File("src/results/ALTERAR");
+		dir = new File("src/results/" + demand + "/ALTERAR");
 		dir.mkdirs();
-		dir = new File("src/results/BD");
+		dir = new File("src/results/" + demand + "/BD");
 		dir.mkdirs();
 
 		BufferedWriter loggerApp = null;
@@ -93,11 +93,11 @@ public class ReportProcessor {
 
 		try {
 			this.createReader(inputFilePath);
-			loggerApp = createLogger("src/results/APP/INTERMEDIARY_APP.csv");
-			loggerLogin = createLogger("src/results/LOGIN/INTERMEDIARY_LOGIN.csv");
-			loggerConsultar = createLogger("src/results/CONSULTAR/INTERMEDIARY_CONSULTAR.csv");
-			loggerAlterar = createLogger("src/results/ALTERAR/INTERMEDIARY_ALTERAR.csv");
-			loggerBD = createLogger("src/results/BD/INTERMEDIARY_BD.csv");
+			loggerApp = createLogger("src/results/" + demand + "/APP/INTERMEDIARY_APP.csv");
+			loggerLogin = createLogger("src/results/" + demand + "/LOGIN/INTERMEDIARY_LOGIN.csv");
+			loggerConsultar = createLogger("src/results/" + demand + "/CONSULTAR/INTERMEDIARY_CONSULTAR.csv");
+			loggerAlterar = createLogger("src/results/" + demand + "/ALTERAR/INTERMEDIARY_ALTERAR.csv");
+			loggerBD = createLogger("src/results/" + demand + "/BD/INTERMEDIARY_BD.csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {
@@ -159,8 +159,9 @@ public class ReportProcessor {
 
 	public static void main(String[] args) throws IOException {
 		ReportProcessor rp = new ReportProcessor();
-//		rp.filterTargetMetrics("COMPLETE_RESULTS_LOW.csv", "INTERMEDIARY_RESULTS_LOW.csv");
-		rp.segregateDevices("src/results/INTERMEDIARY_RESULTS_LOW.csv");
+		rp.filterTargetMetrics("COMPLETE_RESULTS_LOW.csv", "INTERMEDIARY_RESULTS.csv", "LOW_DEMAND");
+		rp.segregateDevices("src/results/INTERMEDIARY_RESULTS_LOW.csv", "LOW_DEMAND");
+
 	}
 
 }

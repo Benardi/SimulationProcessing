@@ -14,13 +14,14 @@ import java.util.List;
 
 public class ReportProcessor {
 	private BufferedReader reader;
+	public final static String TEMP_FILE_PREFIX = "TMPY";
 
 	public ReportProcessor() {
 	}
 
 	public void processReport(String inputFilePath, String batchName, String deviceNames) {
 		filterTargetMetrics(inputFilePath, batchName);
-		segregateDevices(batchName);
+		segregateDevices(batchName, deviceNames);
 		segregateMetrics(batchName, deviceNames);
 
 	}
@@ -63,7 +64,7 @@ public class ReportProcessor {
 		BufferedWriter logger = null;
 		try {
 			this.createReader(inputFilePath);
-			logger = createLogger("src/results/" + demand + "/INTERMEDIARY_RESULTS.csv");
+			logger = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {
@@ -88,23 +89,19 @@ public class ReportProcessor {
 
 	}
 
-	private void createFolderHierarchyByDevice(String demand) {
+	private void createFolderHierarchyByDevice(String demand, String deviceNames) {
+		String[] listOfDevices = deviceNames.split(",");
+		for (int i = 0; i < listOfDevices.length; i++) {
+			File dir = new File("src/results/" + demand + "/" + listOfDevices[i]);
+			dir.mkdirs();
 
-		File dir = new File("src/results/" + demand + "/APP");
-		dir.mkdirs();
-		dir = new File("src/results/" + demand + "/LOGIN");
-		dir.mkdirs();
-		dir = new File("src/results/" + demand + "/CONSULTAR");
-		dir.mkdirs();
-		dir = new File("src/results/" + demand + "/ALTERAR");
-		dir.mkdirs();
-		dir = new File("src/results/" + demand + "/BD");
-		dir.mkdirs();
+		}
 
 	}
 
-	public void segregateDevices(String demand) {
-		createFolderHierarchyByDevice(demand);
+	public void segregateDevices(String demand, String deviceNames) {
+		String[] listOfDevices = deviceNames.split(",");
+		createFolderHierarchyByDevice(demand, deviceNames);
 
 		BufferedWriter loggerApp = null;
 		BufferedWriter loggerLogin = null;
@@ -113,12 +110,17 @@ public class ReportProcessor {
 		BufferedWriter loggerBD = null;
 
 		try {
-			this.createReader("src/results/" + demand + "/INTERMEDIARY_RESULTS.csv");
-			loggerApp = createLogger("src/results/" + demand + "/APP/INTERMEDIARY_APP.csv");
-			loggerLogin = createLogger("src/results/" + demand + "/LOGIN/INTERMEDIARY_LOGIN.csv");
-			loggerConsultar = createLogger("src/results/" + demand + "/CONSULTAR/INTERMEDIARY_CONSULTAR.csv");
-			loggerAlterar = createLogger("src/results/" + demand + "/ALTERAR/INTERMEDIARY_ALTERAR.csv");
-			loggerBD = createLogger("src/results/" + demand + "/BD/INTERMEDIARY_BD.csv");
+			this.createReader("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
+			loggerApp = createLogger("src/results/" + demand + "/" + listOfDevices[0] + "/" + TEMP_FILE_PREFIX
+					+ listOfDevices[0] + ".csv");
+			loggerLogin = createLogger("src/results/" + demand + "/" + listOfDevices[1] + "/" + TEMP_FILE_PREFIX
+					+ listOfDevices[1] + ".csv");
+			loggerConsultar = createLogger("src/results/" + demand + "/" + listOfDevices[2] + "/" + TEMP_FILE_PREFIX
+					+ listOfDevices[2] + ".csv");
+			loggerAlterar = createLogger("src/results/" + demand + "/" + listOfDevices[3] + "/" + TEMP_FILE_PREFIX
+					+ listOfDevices[3] + ".csv");
+			loggerBD = createLogger("src/results/" + demand + "/" + listOfDevices[4] + "/" + TEMP_FILE_PREFIX
+					+ listOfDevices[4] + ".csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {
@@ -193,10 +195,10 @@ public class ReportProcessor {
 		BufferedWriter loggerTime = null;
 
 		try {
-			this.createReader("src/results/" + demand + "/" + device + "/INTERMEDIARY_" + device + ".csv");
-			loggerUtlz = createLogger("src/results/" + demand + "/" + device + "/UTILIZATION.csv");
-			loggerNumber = createLogger("src/results/" + demand + "/" + device + "/NUMBER_WAITING.csv");
-			loggerTime = createLogger("src/results/" + demand + "/" + device + "/WAITING_TIME.csv");
+			this.createReader("src/results/" + demand + "/" + device + "/" + TEMP_FILE_PREFIX + device + ".csv");
+			loggerUtlz = createLogger("src/results/" + demand + "/" + device + "/utilization.csv");
+			loggerNumber = createLogger("src/results/" + demand + "/" + device + "/numberWaiting.csv");
+			loggerTime = createLogger("src/results/" + demand + "/" + device + "/waitingTime.csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {
@@ -241,7 +243,7 @@ public class ReportProcessor {
 
 	public static void main(String[] args) throws IOException {
 		ReportProcessor rp = new ReportProcessor();
-		String deviceNames = "ALTERAR,APP,BD,CONSULTAR,LOGIN";
+		String deviceNames = "alterarDevice,appDevice,bdDevice,consultarDevice,loginDevice";
 		rp.processReport("COMPLETE_RESULTS_LOW.csv", "lowDemand", deviceNames);
 
 	}

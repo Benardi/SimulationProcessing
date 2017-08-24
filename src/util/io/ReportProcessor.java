@@ -9,11 +9,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ReportProcessor {
 	private BufferedReader reader;
 
 	public ReportProcessor() {
+	}
+
+	public void processReport(String inputFilePath, String batchName, String deviceNames) {
+		filterTargetMetrics(inputFilePath, batchName);
+		segregateDevices(batchName);
+		segregateMetrics(batchName, deviceNames);
+
 	}
 
 	private void createReader(String filePath) {
@@ -104,7 +113,7 @@ public class ReportProcessor {
 		BufferedWriter loggerBD = null;
 
 		try {
-			this.createReader("src/results/"+demand+"/INTERMEDIARY_RESULTS.csv");
+			this.createReader("src/results/" + demand + "/INTERMEDIARY_RESULTS.csv");
 			loggerApp = createLogger("src/results/" + demand + "/APP/INTERMEDIARY_APP.csv");
 			loggerLogin = createLogger("src/results/" + demand + "/LOGIN/INTERMEDIARY_LOGIN.csv");
 			loggerConsultar = createLogger("src/results/" + demand + "/CONSULTAR/INTERMEDIARY_CONSULTAR.csv");
@@ -169,10 +178,71 @@ public class ReportProcessor {
 
 	}
 
+	public void segregateMetrics(String demand, String deviceNames) {
+		String[] listOfDevices = deviceNames.split(",");
+		for (int i = 0; i < listOfDevices.length; i++) {
+			segregateMetricsOfDevice(demand, listOfDevices[i]);
+		}
+
+	}
+
+	private void segregateMetricsOfDevice(String demand, String device) {
+
+		BufferedWriter loggerUtlz = null;
+		BufferedWriter loggerNumber = null;
+		BufferedWriter loggerTime = null;
+
+		try {
+			this.createReader("src/results/" + demand + "/" + device + "/INTERMEDIARY_" + device + ".csv");
+			loggerUtlz = createLogger("src/results/" + demand + "/" + device + "/UTILIZATION.csv");
+			loggerNumber = createLogger("src/results/" + demand + "/" + device + "/NUMBER_WAITING.csv");
+			loggerTime = createLogger("src/results/" + demand + "/" + device + "/WAITING_TIME.csv");
+
+			String line;
+			while ((line = this.reader.readLine()) != null) {
+				String[] fragmented = line.split(",");
+
+				switch (fragmented[0]) {
+				case "Instantaneous Utilization":
+					loggerUtlz.write(fragmented[1]);
+					loggerUtlz.newLine();
+					break;
+
+				case "Number Waiting":
+					loggerNumber.write(fragmented[1]);
+					loggerNumber.newLine();
+					break;
+
+				case "Waiting Time":
+					loggerTime.write(fragmented[1]);
+					loggerTime.newLine();
+					break;
+
+				default:
+					break;
+
+				}
+			}
+
+		} catch (Exception e) {
+		} finally {
+			try {
+				loggerUtlz.close();
+				loggerNumber.close();
+				loggerTime.close();
+
+				this.reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
 	public static void main(String[] args) throws IOException {
 		ReportProcessor rp = new ReportProcessor();
-		rp.filterTargetMetrics("COMPLETE_RESULTS_LOW.csv","LOW_DEMAND");
-		rp.segregateDevices("LOW_DEMAND");
+		String deviceNames = "ALTERAR,APP,BD,CONSULTAR,LOGIN";
+		rp.processReport("COMPLETE_RESULTS_LOW.csv", "lowDemand", deviceNames);
 
 	}
 

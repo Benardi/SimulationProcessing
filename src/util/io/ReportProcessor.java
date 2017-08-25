@@ -17,6 +17,7 @@ import java.util.Deque;
 
 public class ReportProcessor {
 	private BufferedReader reader;
+	public final static String DEVICE_NAMES ="alterarDevice,appDevice,bdDevice,consultarDevice,loginDevice";
 	public final static String TEMP_FILE_PREFIX = "TMPY";
 	private Deque<String> deleteBin;
 
@@ -24,10 +25,10 @@ public class ReportProcessor {
 		this.deleteBin = new ArrayDeque<String>();
 	}
 
-	public void processReport(String inputFilePath, String batchName, String deviceNames) {
+	public void processReport(String inputFilePath, String batchName) {
 		filterTargetMetrics(inputFilePath, batchName);
-		segregateDevices(batchName, deviceNames);
-		segregateMetrics(batchName, deviceNames);
+		segregateDevices(batchName);
+		segregateMetrics(batchName);
 		emptyDeleteBin();
 
 	}
@@ -96,8 +97,8 @@ public class ReportProcessor {
 
 	}
 
-	private void createFolderHierarchyByDevice(String demand, String deviceNames) {
-		String[] listOfDevices = deviceNames.split(",");
+	private void createFolderHierarchyByDevice(String demand) {
+		String[] listOfDevices = this.DEVICE_NAMES.split(",");
 		for (int i = 0; i < listOfDevices.length; i++) {
 			File dir = new File("src/results/" + demand + "/" + listOfDevices[i]);
 			dir.mkdirs();
@@ -118,9 +119,9 @@ public class ReportProcessor {
 		
 	}
 
-	public void segregateDevices(String demand, String deviceNames) {
-		String[] listOfDevices = deviceNames.split(",");
-		createFolderHierarchyByDevice(demand, deviceNames);
+	public void segregateDevices(String demand) {
+		String[] listOfDevices = this.DEVICE_NAMES.split(",");
+		createFolderHierarchyByDevice(demand);
 
 		BufferedWriter loggerApp = null;
 		BufferedWriter loggerLogin = null;
@@ -213,8 +214,8 @@ public class ReportProcessor {
 
 	}
 
-	public void segregateMetrics(String demand, String deviceNames) {
-		String[] listOfDevices = deviceNames.split(",");
+	public void segregateMetrics(String demand) {
+		String[] listOfDevices = this.DEVICE_NAMES.split(",");
 		for (int i = 0; i < listOfDevices.length; i++) {
 			segregateMetricsOfDevice(demand, listOfDevices[i]);
 		}
@@ -276,8 +277,7 @@ public class ReportProcessor {
 
 	public static void main(String[] args) throws IOException {
 		ReportProcessor rp = new ReportProcessor();
-		String deviceNames = "alterarDevice,appDevice,bdDevice,consultarDevice,loginDevice";
-		rp.processReport("COMPLETE_RESULTS_LOW.csv", "lowDemand", deviceNames);
+		rp.processReport("src/reports/lowDemandResults.csv", "lowDemand");
 
 	}
 

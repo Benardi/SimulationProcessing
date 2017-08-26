@@ -34,29 +34,8 @@ public class ReportProcessor {
 	}
 
 	private void createReader(String filePath) {
-
-		try {
-			FileInputStream fs = new FileInputStream(filePath);
-			InputStreamReader sr = new InputStreamReader(fs);
-			this.reader = new BufferedReader(sr);
-
-		} catch (FileNotFoundException e) {
-		}
-
-	}
-
-	private BufferedWriter createLogger(String filePath) {
-		BufferedWriter logger = null;
-		try {
-			FileOutputStream fs = new FileOutputStream(filePath);
-			OutputStreamWriter sr = new OutputStreamWriter(fs);
-			logger = new BufferedWriter(sr);
-
-		} catch (FileNotFoundException e) {
-
-		}
-		return logger;
-
+		this.reader = LoggerReaderManager.getInstance().createReader(filePath);
+		
 	}
 
 	private void createFolderHierarchyByDemand(String demand) {
@@ -71,7 +50,8 @@ public class ReportProcessor {
 		BufferedWriter logger = null;
 		try {
 			this.createReader(inputFilePath);
-			logger = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
+			logger = LoggerReaderManager.getInstance()
+					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
 			this.deleteBin.add("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
 
 			String line;
@@ -130,19 +110,24 @@ public class ReportProcessor {
 
 		try {
 			this.createReader("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
-			loggerApp = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[0] + ".csv");
+			loggerApp = LoggerReaderManager.getInstance()
+					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[0] + ".csv");
 			this.deleteBin.add("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[0] + ".csv");
-			
-			loggerLogin = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[1] + ".csv");
+
+			loggerLogin = LoggerReaderManager.getInstance()
+					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[1] + ".csv");
 			this.deleteBin.add("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[1] + ".csv");
 
-			loggerConsultar = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[2] + ".csv");
+			loggerConsultar = LoggerReaderManager.getInstance()
+					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[2] + ".csv");
 			this.deleteBin.add("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[2] + ".csv");
 
-			loggerAlterar = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[3] + ".csv");
+			loggerAlterar = LoggerReaderManager.getInstance()
+					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[3] + ".csv");
 			this.deleteBin.add("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[3] + ".csv");
 
-			loggerBD = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[4] + ".csv");
+			loggerBD = LoggerReaderManager.getInstance()
+					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[4] + ".csv");
 			this.deleteBin.add("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[4] + ".csv");
 
 			String line;
@@ -219,9 +204,12 @@ public class ReportProcessor {
 
 		try {
 			this.createReader("src/results/" + demand + "/" + TEMP_FILE_PREFIX + device + ".csv");
-			loggerUtlz = createLogger("src/results/" + demand + "/" + device + "_utilization.csv");
-			loggerNumber = createLogger("src/results/" + demand + "/" + device + "_numberWaiting.csv");
-			loggerTime = createLogger("src/results/" + demand + "/" + device + "_waitingTime.csv");
+			loggerUtlz = LoggerReaderManager.getInstance()
+					.createLogger("src/results/" + demand + "/" + device + "_utilization.csv");
+			loggerNumber = LoggerReaderManager.getInstance()
+					.createLogger("src/results/" + demand + "/" + device + "_numberWaiting.csv");
+			loggerTime = LoggerReaderManager.getInstance()
+					.createLogger("src/results/" + demand + "/" + device + "_waitingTime.csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {

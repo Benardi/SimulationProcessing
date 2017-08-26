@@ -34,46 +34,20 @@ public class MetricGenerator {
 
 	}
 
-	private BufferedReader createReader(String filePath) {
-		BufferedReader reader = null;
 
-		try {
-			FileInputStream fs = new FileInputStream(filePath);
-			InputStreamReader sr = new InputStreamReader(fs);
-			reader = new BufferedReader(sr);
-
-		} catch (FileNotFoundException e) {
-		}
-		return reader;
-
-	}
-
-	private BufferedWriter createLogger(String filePath) {
-		BufferedWriter logger = null;
-		try {
-			FileOutputStream fs = new FileOutputStream(filePath);
-			OutputStreamWriter sr = new OutputStreamWriter(fs);
-			logger = new BufferedWriter(sr);
-
-		} catch (FileNotFoundException e) {
-
-		}
-		return logger;
-
-	}
 
 	public void processDevice(String path, Double rate, String deviceName) {
 		BufferedReader utilzRd = null;
 		BufferedReader numbwtRd = null;
 		BufferedReader waitRd = null;
 		String[] listOfMetrics = METRIC_NAMES.split(",");
-		BufferedWriter logger = createLogger(path + "Metrics.csv");
+		BufferedWriter logger = LoggerReaderManager.getInstance().createLogger(path + "Metrics.csv");
 		try {
-			utilzRd = createReader(path + "_" + listOfMetrics[0] + ".csv");
+			utilzRd = LoggerReaderManager.getInstance().createReader(path + "_" + listOfMetrics[0] + ".csv");
 			this.deleteBin.add(path + "_" + listOfMetrics[0] + ".csv");
-			numbwtRd = createReader(path + "_" + listOfMetrics[1] + ".csv");
+			numbwtRd = LoggerReaderManager.getInstance().createReader(path + "_" + listOfMetrics[1] + ".csv");
 			this.deleteBin.add(path + "_" + listOfMetrics[1] + ".csv");
-			waitRd = createReader(path + "_" + listOfMetrics[2] + ".csv");
+			waitRd = LoggerReaderManager.getInstance().createReader(path + "_" + listOfMetrics[2] + ".csv");
 			this.deleteBin.add(path + "_" + listOfMetrics[2] + ".csv");
 
 			while (utilzRd.ready() && numbwtRd.ready() && waitRd.ready()) {

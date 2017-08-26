@@ -7,26 +7,18 @@ import java.io.IOException;
 public class MetricGenerator {
 	public static final String METRIC_NAMES = "utilization,numberWaiting,waitingTime";
 
-
-
 	public void processDevice(String path, Double rate, String deviceName) {
-		BufferedReader utilzRd = null;
-		BufferedReader numbwtRd = null;
-		BufferedReader waitRd = null;
-		String[] listOfMetrics = METRIC_NAMES.split(",");
-		BufferedWriter logger = LoggerReaderManager.getInstance().createLogger(path + "Metrics.csv");
+		BufferedReader reader = null;
+		BufferedWriter logger = LoggerReaderManager.getInstance().createLogger(path + "/" +deviceName + "Metrics.csv");
 		try {
-			utilzRd = LoggerReaderManager.getInstance().createReader(path + "_" + listOfMetrics[0] + ".csv");
-			DeletionBin.getInstance().queryFile(path + "_" + listOfMetrics[0] + ".csv");
-			numbwtRd = LoggerReaderManager.getInstance().createReader(path + "_" + listOfMetrics[1] + ".csv");
-			DeletionBin.getInstance().queryFile(path + "_" + listOfMetrics[1] + ".csv");
-			waitRd = LoggerReaderManager.getInstance().createReader(path + "_" + listOfMetrics[2] + ".csv");
-			DeletionBin.getInstance().queryFile(path + "_" + listOfMetrics[2] + ".csv");
-
-			while (utilzRd.ready() && numbwtRd.ready() && waitRd.ready()) {
-				Double utilization = Double.parseDouble(utilzRd.readLine());
-				Double numberWaiting = Double.parseDouble(numbwtRd.readLine());
-				Double waitingTime = Double.parseDouble(waitRd.readLine());
+			reader = LoggerReaderManager.getInstance().createReader(path + "/" + ReportProcessor.SEGREGATED_PREFIX + deviceName + ".csv");
+			DeletionBin.getInstance().queryFile(path + "/" + ReportProcessor.SEGREGATED_PREFIX + deviceName + ".csv");
+			
+			while (reader.ready()) {
+				String[] processedLine = reader.readLine().split(",");
+				Double utilization = Double.parseDouble(processedLine[0]);
+				Double numberWaiting = Double.parseDouble(processedLine[1]);
+				Double waitingTime = Double.parseDouble(processedLine[2]);
 				Double Ts = utilization / rate;
 				Double Ttotal = waitingTime + Ts;
 				Double Ntotal = numberWaiting + utilization;
@@ -38,9 +30,7 @@ public class MetricGenerator {
 		} catch (Exception e) {
 		} finally {
 			try {
-				utilzRd.close();
-				numbwtRd.close();
-				waitRd.close();
+				reader.close();
 				logger.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -66,7 +56,7 @@ public class MetricGenerator {
 
 	public void processAllDevices(String batchName, String[] deviceNames, Double origRate, Double feedBackRate) {
 		for (int i = 0; i < deviceNames.length; i++) {
-			String path = "src/results/" + batchName + "/" + deviceNames[i];
+			String path = "src/results/" + batchName;
 			Double rate = calculatesRate(origRate, feedBackRate, deviceNames[i]);
 			processDevice(path, rate, deviceNames[i]);
 		}

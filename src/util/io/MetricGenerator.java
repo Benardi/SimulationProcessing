@@ -9,7 +9,7 @@ public class MetricGenerator {
 
 	public void processDevice(String path, Double rate, String deviceName) {
 		BufferedReader reader = null;
-		BufferedWriter logger = LoggerReaderManager.getInstance().createLogger(path + "/" +deviceName + "Metrics.csv");
+		BufferedWriter logger = LoggerReaderManager.getInstance().createLogger(path + "/" +deviceName + ".csv");
 		try {
 			reader = LoggerReaderManager.getInstance().createReader(path + "/" + ReportProcessor.SEGREGATED_PREFIX + deviceName + ".csv");
 			DeletionBin.getInstance().queryFile(path + "/" + ReportProcessor.SEGREGATED_PREFIX + deviceName + ".csv");

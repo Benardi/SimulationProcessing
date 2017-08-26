@@ -17,7 +17,7 @@ import java.util.Deque;
 
 public class ReportProcessor {
 	private BufferedReader reader;
-	public final static String DEVICE_NAMES ="appDevice,loginDevice,consultarDevice,alterarDevice,bdDevice";
+	public final static String DEVICE_NAMES = "appDevice,loginDevice,consultarDevice,alterarDevice,bdDevice";
 	public final static String TEMP_FILE_PREFIX = "TMPY";
 	private Deque<String> deleteBin;
 
@@ -100,22 +100,22 @@ public class ReportProcessor {
 	private void createFolderHierarchyByDevice(String demand) {
 		String[] listOfDevices = this.DEVICE_NAMES.split(",");
 		for (int i = 0; i < listOfDevices.length; i++) {
-			File dir = new File("src/results/" + demand + "/" + listOfDevices[i]);
+			File dir = new File("src/results/" + demand);
 			dir.mkdirs();
 
 		}
 
 	}
-	
-	private void emptyDeleteBin(){
-		while(!this.deleteBin.isEmpty()){
+
+	private void emptyDeleteBin() {
+		while (!this.deleteBin.isEmpty()) {
 			try {
 				Path path = Paths.get(this.deleteBin.pop());
 				Files.delete(path);
 			} catch (Exception e) {
 			}
 		}
-		
+
 	}
 
 	public void segregateDevices(String demand) {
@@ -130,30 +130,20 @@ public class ReportProcessor {
 
 		try {
 			this.createReader("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
-			loggerApp = createLogger("src/results/" + demand + "/" + listOfDevices[0] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[0] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + listOfDevices[0] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[0] + ".csv");
-			loggerLogin = createLogger("src/results/" + demand + "/" + listOfDevices[1] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[1] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + listOfDevices[1] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[1] + ".csv");
+			loggerApp = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[0] + ".csv");
+			this.deleteBin.add("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[0] + ".csv");
+			
+			loggerLogin = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[1] + ".csv");
+			this.deleteBin.add("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[1] + ".csv");
 
-			loggerConsultar = createLogger("src/results/" + demand + "/" + listOfDevices[2] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[2] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + listOfDevices[2] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[2] + ".csv");
+			loggerConsultar = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[2] + ".csv");
+			this.deleteBin.add("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[2] + ".csv");
 
-			loggerAlterar = createLogger("src/results/" + demand + "/" + listOfDevices[3] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[3] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + listOfDevices[3] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[3] + ".csv");
+			loggerAlterar = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[3] + ".csv");
+			this.deleteBin.add("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[3] + ".csv");
 
-			loggerBD = createLogger("src/results/" + demand + "/" + listOfDevices[4] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[4] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + listOfDevices[4] + "/" + TEMP_FILE_PREFIX
-					+ listOfDevices[4] + ".csv");
-
+			loggerBD = createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[4] + ".csv");
+			this.deleteBin.add("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[4] + ".csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {
@@ -228,10 +218,10 @@ public class ReportProcessor {
 		BufferedWriter loggerTime = null;
 
 		try {
-			this.createReader("src/results/" + demand + "/" + device + "/" + TEMP_FILE_PREFIX + device + ".csv");
-			loggerUtlz = createLogger("src/results/" + demand + "/" + device + "/utilization.csv");
-			loggerNumber = createLogger("src/results/" + demand + "/" + device + "/numberWaiting.csv");
-			loggerTime = createLogger("src/results/" + demand + "/" + device + "/waitingTime.csv");
+			this.createReader("src/results/" + demand + "/" + TEMP_FILE_PREFIX + device + ".csv");
+			loggerUtlz = createLogger("src/results/" + demand + "/" + device + "_utilization.csv");
+			loggerNumber = createLogger("src/results/" + demand + "/" + device + "_numberWaiting.csv");
+			loggerTime = createLogger("src/results/" + demand + "/" + device + "_waitingTime.csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {

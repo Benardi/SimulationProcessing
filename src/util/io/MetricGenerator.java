@@ -62,19 +62,19 @@ public class MetricGenerator {
 
 	}
 
-	public void processDevice(String path, Double rate) {
+	public void processDevice(String path, Double rate, String deviceName) {
 		BufferedReader utilzRd = null;
 		BufferedReader numbwtRd = null;
 		BufferedReader waitRd = null;
 		String[] listOfMetrics = METRIC_NAMES.split(",");
-		BufferedWriter logger = createLogger(path + "/metrics.csv");
+		BufferedWriter logger = createLogger(path + "Metrics.csv");
 		try {
-			utilzRd = createReader(path + "/" + listOfMetrics[0] + ".csv");
-			this.deleteBin.add(path + "/" + listOfMetrics[0] + ".csv");
-			numbwtRd = createReader(path + "/" + listOfMetrics[1] + ".csv");
-			this.deleteBin.add(path + "/" + listOfMetrics[1] + ".csv");
-			waitRd = createReader(path + "/" + listOfMetrics[2] + ".csv");
-			this.deleteBin.add(path + "/" + listOfMetrics[2] + ".csv");
+			utilzRd = createReader(path + "_" + listOfMetrics[0] + ".csv");
+			this.deleteBin.add(path + "_" + listOfMetrics[0] + ".csv");
+			numbwtRd = createReader(path + "_" + listOfMetrics[1] + ".csv");
+			this.deleteBin.add(path + "_" + listOfMetrics[1] + ".csv");
+			waitRd = createReader(path + "_" + listOfMetrics[2] + ".csv");
+			this.deleteBin.add(path + "_" + listOfMetrics[2] + ".csv");
 
 			while (utilzRd.ready() && numbwtRd.ready() && waitRd.ready()) {
 				Double utilization = Double.parseDouble(utilzRd.readLine());
@@ -121,7 +121,7 @@ public class MetricGenerator {
 		for (int i = 0; i < deviceNames.length; i++) {
 			String path = "src/results/" + batchName + "/" + deviceNames[i];
 			Double rate = calculatesRate(origRate, feedBackRate, deviceNames[i]);
-			processDevice(path, rate);
+			processDevice(path, rate, deviceNames[i]);
 		}
 		emptyDeleteBin();
 	}

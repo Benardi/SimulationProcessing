@@ -17,7 +17,7 @@ import java.util.Deque;
 
 public class ReportProcessor {
 	private BufferedReader reader;
-	public final static String DEVICE_NAMES ="alterarDevice,appDevice,bdDevice,consultarDevice,loginDevice";
+	public final static String DEVICE_NAMES ="appDevice,loginDevice,consultarDevice,alterarDevice,bdDevice";
 	public final static String TEMP_FILE_PREFIX = "TMPY";
 	private Deque<String> deleteBin;
 

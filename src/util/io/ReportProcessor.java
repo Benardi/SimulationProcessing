@@ -3,33 +3,18 @@ package util.io;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 public class ReportProcessor {
 	private BufferedReader reader;
 	public final static String DEVICE_NAMES = "appDevice,loginDevice,consultarDevice,alterarDevice,bdDevice";
 	public final static String TEMP_FILE_PREFIX = "TMPY";
-	private Deque<String> deleteBin;
-
-	public ReportProcessor() {
-		this.deleteBin = new ArrayDeque<String>();
-	}
 
 	public void processReport(String inputFilePath, String batchName) {
 		filterTargetMetrics(inputFilePath, batchName);
 		segregateDevices(batchName);
 		segregateMetrics(batchName);
-		emptyDeleteBin();
+		DeletionBin.getInstance().emptyDeleteBin();
 
 	}
 
@@ -52,7 +37,7 @@ public class ReportProcessor {
 			this.createReader(inputFilePath);
 			logger = LoggerReaderManager.getInstance()
 					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
-			this.deleteBin.add("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
+			DeletionBin.getInstance().queryFile("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {
@@ -78,7 +63,7 @@ public class ReportProcessor {
 	}
 
 	private void createFolderHierarchyByDevice(String demand) {
-		String[] listOfDevices = this.DEVICE_NAMES.split(",");
+		String[] listOfDevices = DEVICE_NAMES.split(",");
 		for (int i = 0; i < listOfDevices.length; i++) {
 			File dir = new File("src/results/" + demand);
 			dir.mkdirs();
@@ -87,19 +72,8 @@ public class ReportProcessor {
 
 	}
 
-	private void emptyDeleteBin() {
-		while (!this.deleteBin.isEmpty()) {
-			try {
-				Path path = Paths.get(this.deleteBin.pop());
-				Files.delete(path);
-			} catch (Exception e) {
-			}
-		}
-
-	}
-
 	public void segregateDevices(String demand) {
-		String[] listOfDevices = this.DEVICE_NAMES.split(",");
+		String[] listOfDevices = DEVICE_NAMES.split(",");
 		createFolderHierarchyByDevice(demand);
 
 		BufferedWriter loggerApp = null;
@@ -107,28 +81,23 @@ public class ReportProcessor {
 		BufferedWriter loggerConsultar = null;
 		BufferedWriter loggerAlterar = null;
 		BufferedWriter loggerBD = null;
-
+		
 		try {
 			this.createReader("src/results/" + demand + "/" + TEMP_FILE_PREFIX + "RESULTS.csv");
-			loggerApp = LoggerReaderManager.getInstance()
-					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[0] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[0] + ".csv");
+			loggerApp = LoggerReaderManager.getInstance().createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[0] + ".csv");
+			DeletionBin.getInstance().queryFile("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[0] + ".csv");
 
-			loggerLogin = LoggerReaderManager.getInstance()
-					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[1] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[1] + ".csv");
+			loggerLogin = LoggerReaderManager.getInstance().createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[1] + ".csv");
+			DeletionBin.getInstance().queryFile("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[1] + ".csv");
 
-			loggerConsultar = LoggerReaderManager.getInstance()
-					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[2] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[2] + ".csv");
+			loggerConsultar = LoggerReaderManager.getInstance().createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[2] + ".csv");
+			DeletionBin.getInstance().queryFile("src/results/" + demand + "/" + "/" + TEMP_FILE_PREFIX + listOfDevices[2] + ".csv");
 
-			loggerAlterar = LoggerReaderManager.getInstance()
-					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[3] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[3] + ".csv");
+			loggerAlterar = LoggerReaderManager.getInstance().createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[3] + ".csv");
+			DeletionBin.getInstance().queryFile("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[3] + ".csv");
 
-			loggerBD = LoggerReaderManager.getInstance()
-					.createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[4] + ".csv");
-			this.deleteBin.add("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[4] + ".csv");
+			loggerBD = LoggerReaderManager.getInstance().createLogger("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[4] + ".csv");
+			DeletionBin.getInstance().queryFile("src/results/" + demand + "/" + TEMP_FILE_PREFIX + listOfDevices[4] + ".csv");
 
 			String line;
 			while ((line = this.reader.readLine()) != null) {
@@ -189,7 +158,7 @@ public class ReportProcessor {
 	}
 
 	public void segregateMetrics(String demand) {
-		String[] listOfDevices = this.DEVICE_NAMES.split(",");
+		String[] listOfDevices = DEVICE_NAMES.split(",");
 		for (int i = 0; i < listOfDevices.length; i++) {
 			segregateMetricsOfDevice(demand, listOfDevices[i]);
 		}

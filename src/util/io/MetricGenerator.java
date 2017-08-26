@@ -2,37 +2,10 @@ package util.io;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 public class MetricGenerator {
 	public static final String METRIC_NAMES = "utilization,numberWaiting,waitingTime";
-	private Deque<String> deleteBin;
-
-	public MetricGenerator() {
-		this.deleteBin = new ArrayDeque<String>();
-
-	}
-
-	private void emptyDeleteBin() {
-		while (!this.deleteBin.isEmpty()) {
-			try {
-				Path path = Paths.get(this.deleteBin.pop());
-				Files.delete(path);
-			} catch (Exception e) {
-			}
-		}
-
-	}
 
 
 
@@ -44,11 +17,11 @@ public class MetricGenerator {
 		BufferedWriter logger = LoggerReaderManager.getInstance().createLogger(path + "Metrics.csv");
 		try {
 			utilzRd = LoggerReaderManager.getInstance().createReader(path + "_" + listOfMetrics[0] + ".csv");
-			this.deleteBin.add(path + "_" + listOfMetrics[0] + ".csv");
+			DeletionBin.getInstance().queryFile(path + "_" + listOfMetrics[0] + ".csv");
 			numbwtRd = LoggerReaderManager.getInstance().createReader(path + "_" + listOfMetrics[1] + ".csv");
-			this.deleteBin.add(path + "_" + listOfMetrics[1] + ".csv");
+			DeletionBin.getInstance().queryFile(path + "_" + listOfMetrics[1] + ".csv");
 			waitRd = LoggerReaderManager.getInstance().createReader(path + "_" + listOfMetrics[2] + ".csv");
-			this.deleteBin.add(path + "_" + listOfMetrics[2] + ".csv");
+			DeletionBin.getInstance().queryFile(path + "_" + listOfMetrics[2] + ".csv");
 
 			while (utilzRd.ready() && numbwtRd.ready() && waitRd.ready()) {
 				Double utilization = Double.parseDouble(utilzRd.readLine());
@@ -97,7 +70,7 @@ public class MetricGenerator {
 			Double rate = calculatesRate(origRate, feedBackRate, deviceNames[i]);
 			processDevice(path, rate, deviceNames[i]);
 		}
-		emptyDeleteBin();
+		DeletionBin.getInstance().emptyDeleteBin();
 	}
 
 }

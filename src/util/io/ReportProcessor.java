@@ -113,7 +113,6 @@ public class ReportProcessor {
 				Path path = Paths.get(this.deleteBin.pop());
 				Files.delete(path);
 			} catch (Exception e) {
-				// TODO: handle exception
 			}
 		}
 		

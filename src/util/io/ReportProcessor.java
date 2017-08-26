@@ -274,10 +274,4 @@ public class ReportProcessor {
 
 	}
 
-	public static void main(String[] args) throws IOException {
-		ReportProcessor rp = new ReportProcessor();
-		rp.processReport("src/reports/lowDemandResults.csv", "lowDemand");
-
-	}
-
 }

@@ -123,14 +123,7 @@ public class MetricGenerator {
 			Double rate = calculatesRate(origRate, feedBackRate, deviceNames[i]);
 			processDevice(path, rate);
 		}
-	}
-
-	public static void main(String[] args) {
-		MetricGenerator mg = new MetricGenerator();
-		mg.processAllDevices("lowDemand", ReportProcessor.DEVICE_NAMES.split(","), 0.739, 0.08);
-		mg.processDevice("src/results/lowDemand/appDevice", 0.739);
-		mg.emptyDeleteBin();
-
+		emptyDeleteBin();
 	}
 
 }
